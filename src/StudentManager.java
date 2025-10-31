@@ -68,19 +68,58 @@ public class StudentManager {
 
     public void addStudent(){
         System.out.println("\n========== 新增學生 ==========");
+        System.out.println("請選擇學生類型");
+        System.out.println("1. 一般學生 (Student)");
+        System.out.println("2. 研究生 (GraduateStudent)");
+        System.out.println("3. 交換學生 (ExchangeStudent)");
+        System.out.println("請輸入選項 (1-3): ");
+
+        String choice = scanner.nextLine();
+        Student newStudent = null;
+
         System.out.println("輸入學號");
         String id = scanner.nextLine();
         System.out.println("輸入姓名");
         String name = scanner.nextLine();
         System.out.println("輸入成績");
         int score = scanner.nextInt();
+        scanner.nextLine();
 
-        Student student = new Student(id,name,score);
+        switch (choice) {
+            case "1":
+                //一般學生
+                newStudent = new Student(id, name, score);
+                break;
 
-        students.add(student);
+            case "2":
+                //研究生
+                System.out.println("研究主題: ");
+                String topic = scanner.nextLine();
+                System.out.println("指導教授: ");
+                String advisor = scanner.nextLine();
 
-        System.out.println("學生新增成功");
-        student.showInfo();
+                newStudent = new GraduateStudent(id, name,score, topic, advisor);
+                break;
+
+            case "3":
+                //交換學生
+                System.out.println("交換國家: ");
+                String country = scanner.nextLine();
+                System.out.println("交換月數: ");
+                int months = Integer.parseInt(scanner.nextLine());
+
+                newStudent = new ExchangeStudent(id, name, score, country, months);
+                break;
+
+            default:
+                System.out.println("x 無效選項! 操作取消 ");
+                return;
+        }
+
+        if (newStudent !=null){
+            this.students.add(newStudent);
+            System.out.println("學生新增成功");
+        }
     }
 
     public void findStudent(){
@@ -100,21 +139,19 @@ public class StudentManager {
     }
 
     public void showAllStudent(){
-        System.out.println("\n========== 所有學生 ==========");
-
-        if(students.isEmpty()){
-            System.out.println("目前沒有任何資料");
+        System.out.println("\n--- 學生清單 (共 " + students.size() + "人) ---");
+        if (students.isEmpty()){
+            System.out.println("目前沒有學生資料");
             return;
         }
 
-        int index = 1;
-        for(Student student : students){
-            System.out.println(index + ".");
+        for (Student student : students){
+            System.out.println("----------------------------------");
+
             student.showInfo();
-            index++;
         }
 
-        System.out.println("總共 " + students.size() + "位學生" );
+        System.out.println("----------------------------------");
 
     }
 

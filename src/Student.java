@@ -5,15 +5,18 @@ public class Student {
     private int score; //分數
 
     public Student(String studentId, String name, int score){
+        System.out.println(" >> 進入 Student 建構子");
         this.studentId = studentId;
         this.name = name;
         setScore(score);
+        System.out.println(" Student 建構子完成");
 
     }
 
     public Student(String studentId, String name){
         this(studentId,name,0);
     }
+
 
 
     public String getStudentId(){
