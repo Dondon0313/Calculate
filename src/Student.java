@@ -1,4 +1,4 @@
-public class Student {
+public class Student implements Printable, Gradeable{
     private String studentId; //學號
     private String name; //名字
 
@@ -45,10 +45,12 @@ public class Student {
         }
     }
 
+    @Override
     public boolean isPass(){
-        return score >= 60;
+        return getScore() >= 60;
     }
 
+    @Override
     public String getGrade(){
         if(score >= 90){
             return "A";
@@ -63,7 +65,7 @@ public class Student {
         }
 
     }
-
+    @Override
     public void showInfo(){
         String passStatus = isPass() ? "及格" : "不及格";
         System.out.println("學號: " + studentId +

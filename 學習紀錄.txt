@@ -1,0 +1,188 @@
+﻿10/28(二)
+
+
+【核心概念】
+1. extends 關鍵字 → 繼承父類別
+2. super() → 呼叫父類別建構子（必須第一行）
+3. @Override → 覆寫父類別方法
+
+【語法】
+public class 子類別 extends 父類別 {
+    super(參數);  // 建構子第一行
+}
+
+【完成】
+✓ GraduateStudent (研究生)
+✓ ExchangeStudent (交換學生)
+
+【重點】
+- 子類別自動繼承父類別的 public 方法
+- private 屬性看不到，要用 getter/setter
+- 覆寫方法可以用 super.方法名() 呼叫父類別版本
+
+
+10/31(五)
+
+
+【核心概念】
+
+    向上轉型 (Upcasting) → 父類別型別的集合 (ArrayList<Student>)，可以儲存子類別的物件 (GraduateStudent, ExchangeStudent)。
+
+    動態繫結 (Dynamic Binding) → 同樣呼叫 student.showInfo()，程式會自動執行該物件真實型別所覆寫 (Override) 的方法。
+
+    Scanner 緩衝區陷阱 → nextInt() 只讀走數字，會留下 \n (換行符) 導致下一個 nextLine() 讀到空字串。
+
+【語法 / 實作技巧】
+Java
+
+// 1. 宣告父類別集合 (多型基礎)
+ArrayList<Student> students = new ArrayList<>();
+
+// 2. 子類別物件存入 (向上轉型)
+students.add(new GraduateStudent(...));
+students.add(new ExchangeStudent(...));
+
+// 3. 避免 Scanner 陷阱 (推薦)
+int score = Integer.parseInt(scanner.nextLine());
+
+【完成】 ✓ StudentManager.addStudent() (用 switch 支援多類型新增) ✓ StudentManager.showAllStudents() (用 for 迴圈展示多型威力) ✓ 修正 Scanner 因 nextInt() 導致 nextLine() 跳過輸入的 Bug
+
+【重點】
+
+    ArrayList<Student> 是實現統一管理的關鍵，讓系統有擴充性。
+
+    student.showInfo() 會自動呼叫 GraduateStudent 或 ExchangeStudent 的版本，這就是多型。
+
+    要麼在 nextInt() 後加 scanner.nextLine() 清除換行，要麼全部改用 Integer.parseInt(scanner.nextLine()) 來避免陷阱。
+
+
+11/3(一)
+
+
+【核心概念】
+
+    instanceof 運算子 → 檢查物件的真實型別
+
+    向下轉型 (Downcasting) → 將父類別型別，強制轉回子類別型別
+
+    ClassCastException → 型別轉型失敗時拋出的執行期錯誤
+	
+	
+【語法】
+Java
+
+// (父類別變數 student, 子類別型別 ImprovedGraduateStudent)
+if (student instanceof ImprovedGraduateStudent) {
+    // 檢查通過，才安全轉型
+    ImprovedGraduateStudent grad = (ImprovedGraduateStudent) student;
+    grad.addPublication(); // 呼叫子類別獨有方法
+}
+
+【完成】 ✓ findStudentAndAddPublication() (實作 instanceof 和向下轉型) ✓ addStudent() (新增 case 選項以支援 ImprovedGraduateStudent) ✓ 成功測試並修正 ClassCastException 錯誤
+
+【重點】
+
+    安全原則： 必須先用 instanceof 檢查，才能進行「向下轉型」，以避免 ClassCastException。
+
+    目地： 向下轉型是為了呼叫「子類別獨有的」方法（如 addPublication()）。
+
+    測試流程： 必須先執行「1. 新增學生」，才能執行「7. 論文系統」（Create before Update）。
+
+    兄弟關係： GraduateStudent 和 ImprovedGraduateStudent 屬於兄弟關係，不能互相轉型。
+	
+
+11/4(二)
+
+【核心概念】
+
+    interface 關鍵字 → 定義一個 100% 抽象的「合約」或「能力」。
+
+    implements 關鍵字 → 類別「簽署」並「實作」介面合約（可以實作多個）。
+
+    介面導向編程 → 依賴「合約 (介面)」而非「實作 (類別)」，以達到解耦。
+	
+【語法】
+Java
+
+// 1. 定義介面
+public interface Printable {
+    void showInfo(); // 介面方法預設為 public abstract
+}
+
+// 2. 實作介面 (可多重實作)
+public class Student implements Printable, Gradeable {
+    @Override
+    public void showInfo() {
+        // 必須提供方法的完整實作
+    }
+    // ... 必須實作 Gradeable 的所有方法
+}
+
+// 3. 介面導向宣告 (推薦)
+List<Student> students = new ArrayList<>();
+// (介面)         (實作類別)
+
+【完成】 ✓ Printable.java 介面（定義 showInfo 能力） ✓ Gradeable.java 介面（定義 getGrade, isPass 能力） ✓ Student.java 類別（implements 上述兩個介面） ✓ StudentManager.java 類別（將 ArrayList 宣告修改為 List 介面）
+
+【重點】
+
+    彈性與解耦： 宣告為 List (介面) 比 ArrayList (類別) 好，因為未來可以輕易更換實作（如 LinkedList），而其他程式碼完全不需要修改。
+
+    多重實作： 介面解決了 Java「單一繼承」的限制。一個類別只能 extends 一個父類別，但可以 implements 多個介面。
+
+    @Override 的區別：
+
+        extends 的 @Override → 覆寫（改寫已有的功能）。
+
+        implements 的 @Override → 實作（提供合約中空白的功能）。
+		
+
+11/5(三)
+
+【核心概念】
+
+    try-with-resources → 自動管理並關閉資源（如檔案），避免洩漏。
+
+    BufferedWriter / FileWriter → 高效率地將文字寫入到檔案。
+
+    BufferedReader / FileReader → 高效率地從檔案讀取文字。
+
+    IOException → 處理檔案輸入/輸出 (I/O) 時必須捕捉的錯誤。
+
+    字串解析 (Parsing) → 將讀取到的純文字，轉回 Java 物件的過程。
+
+【語法】
+// 1. 檔案寫入 (try-with-resources)
+try (BufferedWriter writer = new BufferedWriter(new FileWriter("file.txt"))) {
+    writer.write("A001,Alice,85"); // 寫入字串
+    writer.newLine(); // 換行
+} catch (IOException e) {
+    // 處理寫入錯誤
+}
+
+// 2. 檔案讀取 (while 迴圈 + split)
+try (BufferedReader reader = new BufferedReader(new FileReader("file.txt"))) {
+    String line;
+    while ((line = reader.readLine()) != null) {
+        String[] parts = line.split(","); // 用逗號分割
+        int score = Integer.parseInt(parts[2]); // 字串轉數字
+        // ... new Student(parts[0], parts[1], score)
+    }
+} catch (IOException | NumberFormatException e) {
+    // 處理讀取錯誤或格式錯誤
+}
+
+【完成】 ✓ saveToFile(String filename) 方法（將 List<Student> 儲存為 CSV） ✓ loadFromFile(String filename) 方法（讀取 CSV 並重建 List<Student>） ✓ StudentManager.run() 主選單（新增「8. 儲存」和「9. 讀取」選項） ✓ StudentManager.run() 優化（在程式啟動時自動 loadFromFile）
+
+【重點】
+
+    try(...) 語法： 宣告在 try 小括號內的資源（如 writer），不論成功或失敗都會被自動 close()。
+
+    loadFromFile 流程： 讀取前應先 students.clear()，以避免資料重複載入。
+
+    資料轉換： line.split(",") 將字串轉為字串陣列；Integer.parseInt() 將字串轉為數字。
+
+    目前限制： 目前的存讀邏輯只處理了 Student 的基本資料，尚未支援 GraduateStudent 等子類別的特定資料（如 researchTopic）。
+	
+	
+	
