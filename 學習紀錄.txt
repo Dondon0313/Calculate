@@ -139,6 +139,9 @@ List<Student> students = new ArrayList<>();
 
 11/5(三)
 
+
+
+
 【核心概念】
 
     try-with-resources → 自動管理並關閉資源（如檔案），避免洩漏。
@@ -185,4 +188,52 @@ try (BufferedReader reader = new BufferedReader(new FileReader("file.txt"))) {
     目前限制： 目前的存讀邏輯只處理了 Student 的基本資料，尚未支援 GraduateStudent 等子類別的特定資料（如 researchTopic）。
 	
 	
+
+
+
+11/7(五)
+
+
+
+
+【核心概念】
+
+    static (靜態) → 屬於類別 (Class)、被所有物件共享；不需 new 即可用「類別名稱」存取。
+
+    final (最終) → 代表「不可變」。變數僅能賦值一次；方法不能被覆寫；類別不能被繼承。
+
+    static final → 兩者結合，代表「全域靜態常數」（例如 DEFAULT_FILENAME），值固定且被所有物件共享。
 	
+	
+	
+【語法】
+
+// 1. Static (在 Student.java 中)
+private static int totalStudents = 0; // 靜態變數 (共享)
+public static int getTotalStudents() { ... } // 靜態方法
+
+// 2. Final (在 StudentManager.java 中)
+private final Scanner scanner; // final 變數 (宣告)
+public StudentManager() {
+    this.scanner = new Scanner(System.in); // 必須在建構子賦值
+}
+
+// 3. Static Final (在 StudentManager.java 中)
+public static final String DEFAULT_FILENAME = "students.txt";
+
+// 4. 呼叫 Static 方法
+int count = Student.getTotalStudents(); // 用「類別名稱」呼叫
+
+
+【完成】 ✓ Student.java (新增 static 計數器 totalStudents 和 getTotalStudents() 方法) ✓ StudentManager.java (將 scanner 改為 final 變數) ✓ StudentManager.run() (在 showStatistics 中呼叫 static 方法) ✓ StudentManager.run() (優化 case 8/9，使用 static final 常數並支援自訂檔名)
+
+【重點】
+
+    static vs 非 static： Student.getTotalStudents() (靜態) 記錄總共 new 過幾次；students.size() (非靜態) 記錄目前 List 中有幾個。
+
+    final 變數： 必須在「宣告時」或「建構子中」賦值，確保物件建立後其指向不會再被改變（這就是您公司程式碼中 private final _topic; 的用法）。
+
+    switch 範圍： 在 switch 的 case 區塊中使用 { ... } 大括號，可以建立獨立的變數範圍，避免「variable ... is already defined」的錯誤。
+	
+	
+

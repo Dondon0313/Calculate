@@ -4,12 +4,19 @@ import java.util.Scanner;
 import java.util.List;
 
 public class StudentManager {
+
+    public static final String DEFAULT_FILENAME = "student.txt";
+
     private List<Student> students;
-    private Scanner scanner;
+    private final Scanner scanner;
 
     public StudentManager() {
         students = new ArrayList<>();
-        scanner = new Scanner(System.in);
+
+        this.scanner = new Scanner(System.in);
+
+        loadFromFile(DEFAULT_FILENAME);
+        System.out.println("--- 系統啟動完畢 ---");
     }
 
     public void run() {
@@ -43,12 +50,27 @@ public class StudentManager {
                 case 7:
                     findStudentAndAddPublication();
                     break;
-                case 8:
-                    saveFile("student.txt");
+                case 8: {
+                    System.out.println("請輸入要「儲存」的檔案名稱 (預設 " + DEFAULT_FILENAME + "): ");
+                    String filename = scanner.nextLine();
+
+                    if (filename.trim().isEmpty()) {
+                        filename = DEFAULT_FILENAME;
+                    }
+
+                    saveFile(filename);
                     break;
-                case 9:
-                    loadFromFile("student.txt");
-                    break;
+                }
+                    case 9: {
+                        System.out.println("請輸入要「讀取」的檔案名稱 (");
+                        String filename = scanner.nextLine();
+
+                        if (filename.trim().isEmpty()) {
+                            filename = DEFAULT_FILENAME;
+                        }
+                        loadFromFile(filename);
+                        break;
+                    }
                 case 0:
                     System.out.println("關閉");
                     running = false;
@@ -233,46 +255,58 @@ public class StudentManager {
 
     private void showStatistics() {
         System.out.println("\n========== 統計資訊 ==========");
-        if (students.isEmpty()) {
-            System.out.println("目前沒有任何學生資料");
-            return;
-        }
 
-        //總分
-        int sum = 0;
-        for (Student student : students) {
-            sum += student.getScore();
-        }
-        double average = (double) sum / students.size();
+        // 1. (非靜態) 顯示「目前 List 中」有幾個學生
+        //    這屬於 manager 物件，是「非靜態」的
+        int currentCountInList = students.size();
+        System.out.println("目前記憶體 (List) 中的學生數: " + currentCountInList);
 
-        //最高最低
-        int max = students.get(0).getScore();
-        int min = students.get(0).getScore();
+        // 2. (靜態) 顯示「總共 new 過」幾個學生
+        //    我們「直接」透過 Student 類別名稱呼叫 static 方法
+        int totalCreated = Student.getTotalStudents(); //
+        System.out.println("自程式啟動以來，總共建立過的學生數: " + totalCreated);
 
-        for (Student student : students) {
-            if (student.getScore() > max) {
-                max = student.getScore();
-            }
-            if (student.getScore() < min) {
-                min = student.getScore();
-            }
-        }
 
-        //及格人數
-        int passCount = 0;
-        for (Student student : students) {
-            if (student.isPass()) {
-                passCount++;
-            }
-        }
-        double passRate = (double) passCount / students.size() * 100;
-
-        System.out.println("學生總數 : " + students.size());
-        System.out.println("平均分數: " + String.format("%.2f", average));
-        System.out.println("最高分" + max);
-        System.out.println("最低分" + min);
-        System.out.println("及格人數" + passCount + " / " + students.size());
-        System.out.println("及格率" + String.format("%.2f", passRate) + "%");
+//        if (students.isEmpty()) {
+//            System.out.println("目前沒有任何學生資料");
+//            return;
+//        }
+//
+//        //總分
+//        int sum = 0;
+//        for (Student student : students) {
+//            sum += student.getScore();
+//        }
+//        double average = (double) sum / students.size();
+//
+//        //最高最低
+//        int max = students.get(0).getScore();
+//        int min = students.get(0).getScore();
+//
+//        for (Student student : students) {
+//            if (student.getScore() > max) {
+//                max = student.getScore();
+//            }
+//            if (student.getScore() < min) {
+//                min = student.getScore();
+//            }
+//        }
+//
+//        //及格人數
+//        int passCount = 0;
+//        for (Student student : students) {
+//            if (student.isPass()) {
+//                passCount++;
+//            }
+//        }
+//        double passRate = (double) passCount / students.size() * 100;
+//
+//        System.out.println("學生總數 : " + students.size());
+//        System.out.println("平均分數: " + String.format("%.2f", average));
+//        System.out.println("最高分" + max);
+//        System.out.println("最低分" + min);
+//        System.out.println("及格人數" + passCount + " / " + students.size());
+//        System.out.println("及格率" + String.format("%.2f", passRate) + "%");
     }
 
 
